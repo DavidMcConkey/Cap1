@@ -1,5 +1,5 @@
 import "./App.css";
-import { Browser as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 function App() {
   return (
     <div className="App">
