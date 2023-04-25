@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
-    <div ClassName="header">
+    <div className="header">
       <div className="headerLeft">
         <Link to="/">
           <img
@@ -25,8 +25,6 @@ const Header = () => {
         <Link to="/bookoffs" style={{ textDecoration: "none" }}>
           <span>Bookoffs</span>
         </Link>
-      </div>
-      <div className="headerRight">
         <Link to="/sign-up" style={{ textDecoration: "none" }}>
           <span>Sign Up</span>
         </Link>

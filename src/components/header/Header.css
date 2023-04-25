@@ -1,22 +1,27 @@
 .header {
-  margin: 0 2.5rem;
+  margin: 0;
   padding: 0.5rem 0;
   align-items: center;
   display: flex;
   justify-content: space-between;
+  background-color: orange;
 }
 
 .header_icon {
-  width: 130px;
+  width: 120px;
   cursor: pointer;
   border-radius: 10%;
 }
 
-.headerLeft {
-  display: flex;
-  align-items: left;
-}
+.headerLeft,
 .headerRight {
   display: flex;
-  align-items: right;
+  align-items: center;
+}
+
+a > span {
+  margin: 0 30px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: royalblue;
 }
