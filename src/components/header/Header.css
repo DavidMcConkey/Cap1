@@ -4,7 +4,7 @@
   align-items: center;
   display: flex;
   justify-content: space-between;
-  background-color: orange;
+  background-color: midnightblue;
 }
 
 .header_icon {
@@ -23,5 +23,5 @@ a > span {
   margin: 0 30px;
   font-size: 1.3rem;
   cursor: pointer;
-  color: royalblue;
+  color: peru;
 }
