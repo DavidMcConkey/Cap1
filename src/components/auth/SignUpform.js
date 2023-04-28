@@ -8,7 +8,7 @@ const SignupForm = () => {
     useFormik({
       initialValues: {
         restaurantname: "",
-        fullname: "",
+        name: "",
         phone: "",
         password: "",
       },
@@ -16,7 +16,7 @@ const SignupForm = () => {
         restaurantname: Yup.string()
           .min(1, "Restaurant Name must be longer than 1 character")
           .required("Required"),
-        fullname: Yup.string()
+        name: Yup.string()
           .min(1, "Name must be longer than 1 character")
           .required("Required"),
         phone: Yup.string()
@@ -28,9 +28,9 @@ const SignupForm = () => {
           .min(6, "Password must be longer than 6 characters")
           .required("Required"),
       }),
-      onSubmit: ({ restaurantname, phone, password, fullname }) => {
+      onSubmit: ({ restaurantname, phone, password, name }) => {
         alert(
-          `RestName: ${restaurantname},phone: ${phone}, password: ${password}, fullname: ${fullname}`
+          `RestName: ${restaurantname},phone: ${phone}, password: ${password}, fullname: ${name}`
         );
       },
     });
@@ -50,19 +50,17 @@ const SignupForm = () => {
         {touched.restaurantname && errors.restaurantname ? (
           <div>{errors.restaurantname}</div>
         ) : null}
-        <label htmlFor="fullname">Full Name:</label>
+        <label htmlFor="name">Full Name:</label>
         <input
           className="inputbox"
-          value={values.fullname}
+          value={values.name}
           onChange={handleChange}
           onBlur={handleBlur}
-          id="fullname"
-          name="fullname"
-          type="fullname"
+          id="name"
+          name="name"
+          type="name"
         />
-        {touched.fullname && errors.fullname ? (
-          <div>{errors.fullname}</div>
-        ) : null}
+        {touched.name && errors.name ? <div>{errors.name}</div> : null}
         <label htmlFor="phone">Phone Number:</label>
         <input
           className="inputbox"
