@@ -1,18 +1,21 @@
+import os
 from flask import Flask,render_template, request,session,g, redirect, jsonify,abort
-from flask_debugtoolbar import DebugToolbarExtension
+import pyrebase
 from flask_session import Session
 from flask_bcrypt import Bcrypt
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS, cross_origin
 from models import db,connect_db,User
-from config import ApplicationConfig
 from flask_bcrypt import bcrypt
 CURR_USER_KEY = 'curr_user'
 
 
 
 app = Flask(__name__)
-app.config.from_object(ApplicationConfig)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL','postgresql:///resteast')
+app.config['SECRET_KEY']=os.environ["SECRET_KEY", "secretsecretsecret"]
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ECHO'] = True
+
 bcrypt = Bcrypt(app)
 server_session = Session(app)
 

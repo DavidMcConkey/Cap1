@@ -1,4 +1,4 @@
-import { useFormik, yupToFormErrors, Field, Form } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import "./Signupform.css";
 const phoneRegExp =
@@ -8,12 +8,16 @@ const SignupForm = () => {
     useFormik({
       initialValues: {
         restaurantname: "",
+        fullname: "",
         phone: "",
         password: "",
       },
       validationSchema: Yup.object({
         restaurantname: Yup.string()
           .min(1, "Restaurant Name must be longer than 1 character")
+          .required("Required"),
+        fullname: Yup.string()
+          .min(1, "Name must be longer than 1 character")
           .required("Required"),
         phone: Yup.string()
           .required("required")
@@ -24,16 +28,16 @@ const SignupForm = () => {
           .min(6, "Password must be longer than 6 characters")
           .required("Required"),
       }),
-      onSubmit: ({ restaurantname, phone, password }) => {
+      onSubmit: ({ restaurantname, phone, password, fullname }) => {
         alert(
-          `RestName: ${restaurantname},phone: ${phone}, password: ${password}`
+          `RestName: ${restaurantname},phone: ${phone}, password: ${password}, fullname: ${fullname}`
         );
       },
     });
   return (
     <div className="center">
       <form onSubmit={handleSubmit}>
-        <label htmlFor="restaurandname">Restaurant Name</label>
+        <label htmlFor="restaurandname">Restaurant Name:</label>
         <input
           className="inputbox"
           value={values.restaurantname}
@@ -46,7 +50,20 @@ const SignupForm = () => {
         {touched.restaurantname && errors.restaurantname ? (
           <div>{errors.restaurantname}</div>
         ) : null}
-        <label htmlFor="phone">Phone Number</label>
+        <label htmlFor="fullname">Full Name:</label>
+        <input
+          className="inputbox"
+          value={values.fullname}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          id="fullname"
+          name="fullname"
+          type="fullname"
+        />
+        {touched.fullname && errors.fullname ? (
+          <div>{errors.fullname}</div>
+        ) : null}
+        <label htmlFor="phone">Phone Number:</label>
         <input
           className="inputbox"
           value={values.phone}
@@ -57,7 +74,7 @@ const SignupForm = () => {
           type="phone"
         />
         {touched.phone && errors.phone ? <div>{errors.phone}</div> : null}
-        <label htmlFor="password">Password</label>
+        <label htmlFor="password">Password:</label>
         <input
           className="inputbox"
           value={values.password}
