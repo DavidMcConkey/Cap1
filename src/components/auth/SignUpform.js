@@ -1,15 +1,16 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import "./Signupform.css";
-const phoneRegExp =
-  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase";
+
 const SignupForm = () => {
   const { handleSubmit, handleChange, values, touched, errors, handleBlur } =
     useFormik({
       initialValues: {
         restaurantname: "",
         name: "",
-        phone: "",
+        email: "",
         password: "",
       },
       validationSchema: Yup.object({
@@ -19,25 +20,25 @@ const SignupForm = () => {
         name: Yup.string()
           .min(1, "Name must be longer than 1 character")
           .required("Required"),
-        phone: Yup.string()
-          .required("required")
-          .matches(phoneRegExp, "Phone number is not valid")
-          .min(10, "too short")
-          .max(10, "too long"),
+        email: Yup.string().required("required"),
         password: Yup.string()
           .min(6, "Password must be longer than 6 characters")
           .required("Required"),
       }),
-      onSubmit: ({ restaurantname, phone, password, name }) => {
-        alert(
-          `RestName: ${restaurantname},phone: ${phone}, password: ${password}, fullname: ${name}`
-        );
+      onSubmit: ({ restaurantname, email, password, name }) => {
+        createUserWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            console.log(userCredential);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       },
     });
   return (
     <div className="center">
       <form onSubmit={handleSubmit}>
-        <label htmlFor="restaurandname">Restaurant Name:</label>
+        <label htmlFor="restaurantname">Restaurant Name:</label>
         <input
           className="inputbox"
           value={values.restaurantname}
@@ -61,17 +62,17 @@ const SignupForm = () => {
           type="name"
         />
         {touched.name && errors.name ? <div>{errors.name}</div> : null}
-        <label htmlFor="phone">Phone Number:</label>
+        <label htmlFor="email">Email:</label>
         <input
           className="inputbox"
-          value={values.phone}
+          value={values.email}
           onChange={handleChange}
           onBlur={handleBlur}
-          id="phone"
-          name="phone"
-          type="phone"
+          id="email"
+          name="email"
+          type="email"
         />
-        {touched.phone && errors.phone ? <div>{errors.phone}</div> : null}
+        {touched.email && errors.email ? <div>{errors.email}</div> : null}
         <label htmlFor="password">Password:</label>
         <input
           className="inputbox"

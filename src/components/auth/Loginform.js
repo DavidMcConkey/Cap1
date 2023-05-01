@@ -1,40 +1,51 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import "./Loginform.css";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase";
+import { useNavigate } from "react-router-dom";
 const LoginForm = () => {
+  const navigate = useNavigate();
   const { handleSubmit, handleChange, values, touched, errors, handleBlur } =
     useFormik({
       initialValues: {
-        userid: "",
+        email: "",
         password: "",
       },
       validationSchema: Yup.object({
-        userid: Yup.string()
-          .max(6, "User ID must be shorter than 6 characters")
+        email: Yup.string()
+          .min(6, "Email must be longer than 6 characters")
           .required("Required"),
         password: Yup.string()
           .min(6, "Password must be longer than 6 characters")
           .required("Required"),
       }),
-      onSubmit: ({ userid, password }) => {
-        alert(`UserID: ${userid}, password: ${password}`);
+      onSubmit: ({ email, password }) => {
+        signInWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            console.log(userCredential);
+            navigate("/");
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       },
     });
   return (
     <div className="center">
       <form onSubmit={handleSubmit}>
         <header></header>
-        <label htmlFor="userid">UserID</label>
+        <label htmlFor="email">Email:</label>
         <input
           className="inputbox"
-          value={values.userid}
+          value={values.email}
           onChange={handleChange}
           onBlur={handleBlur}
-          id="userid"
-          name="userid"
-          type="text"
+          id="email"
+          name="email"
+          type="email"
         />
-        {touched.userid && errors.userid ? <div>{errors.login}</div> : null}
+        {touched.email && errors.email ? <div>{errors.email}</div> : null}
         <label htmlFor="password">Password</label>
         <input
           className="inputbox"

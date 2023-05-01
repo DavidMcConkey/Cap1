@@ -4,7 +4,7 @@ import hashlib
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
-Bcrypt = Bcrypt()
+bcrypt = Bcrypt()
 db = SQLAlchemy()
 
 class ShiftRole(db.Model):
@@ -261,23 +261,36 @@ class User(db.Model):
     availabilities = db.orm.relationship("UserAvailability", viewonly=True)
 
     @classmethod
-    def hash_password(text):
-        """hash some random text"""
-        hasher = hashlib.new("sha256")
-        hasher.update(text.encode("utf-8"))
-        return hasher.hexdigest()
+    def signup(cls,restaurantname,name,phone,password):
+        """Signs up admin along w restaurant"""
 
-    def set_password(self, password):
-        """Set the user password hash"""
-        self.password = User.__hash(password)
+        hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
 
-    def password_matches(self, password):
-        """does this match the password"""
-        return User.hash_password(password) == self.password
+        user = User(
+            restaurantname = restaurantname,
+            name = name,
+            phone = phone,
+            password = hashed_pwd,
+     )
+        db.session.add(user)
+        return user
+    @classmethod
+    def authenticate(cls, userid, password):
+        """Find user with `phone` and `password`.
 
-    def __repr__(self):
-        """display string"""
-        return f'User(id={self.id} name="{self.name}" email="{self.email}")'
+        If can't find matching user (or if password is wrong), returns False.
+        """
+
+        user = cls.query.filter_by(userid=userid).first()
+
+        if user:
+            is_auth = bcrypt.check_password_hash(user.password, password)
+            if is_auth:
+                return user
+
+        return False
+
+
 
 def connect_db(app):
     """Connects this databse to provided flask app."""
