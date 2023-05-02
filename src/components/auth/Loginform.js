@@ -1,9 +1,8 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import "./Loginform.css";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const LoginForm = () => {
   const navigate = useNavigate();
   const { handleSubmit, handleChange, values, touched, errors, handleBlur } =
@@ -21,13 +20,20 @@ const LoginForm = () => {
           .required("Required"),
       }),
       onSubmit: ({ email, password }) => {
-        signInWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            console.log(userCredential);
-            navigate("/");
+        axios
+          .post("http://localhost:5000/login", {
+            email: email,
+            password: password,
           })
-          .catch((error) => {
-            console.log(error);
+          .then(function (response) {
+            console.log(response.data);
+            navigate("/dashboard");
+          })
+          .catch(function (error) {
+            console.log(error, "error");
+            if (error.response.status === 401) {
+              alert("Invalid credentials");
+            }
           });
       },
     });

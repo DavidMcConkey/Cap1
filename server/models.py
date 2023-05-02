@@ -1,11 +1,14 @@
 """SQLALCHEMY models for placeholder"""
-import hashlib
 
+from uuid import uuid4
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
+
+def get_uuid():
+    return uuid4().hex
 
 class ShiftRole(db.Model):
     """How many people of certain role are needed for a shift.
@@ -80,7 +83,7 @@ class UserRolePreference(db.Model):
 
     __tablename__ = "user_role_preference"
     id = db.Column(db.Integer, primary_key=True,autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.String, db.ForeignKey('user.id'))
     user = db.orm.relationship('User')
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     role = db.orm.relationship('Role')
@@ -107,7 +110,7 @@ class UserExceptions(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     restaurant_id = db.Column(db.Integer, db.ForeignKey("restaurant.id"))
     restaurant = db.orm.relationship("Restaurant")
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    user_id = db.Column(db.String, db.ForeignKey("user.id"))
     user = db.orm.relationship("User")
     hours_limit = db.Column(db.Integer)
     notes = db.Column(db.String(50))
@@ -139,7 +142,7 @@ class ScheduledShift(db.Model):
     shift= db.orm.relationship('Shift')
     role_id=db.Column(db.Integer, db.ForeignKey('role.id'))
     role=db.orm.relationship('Role')
-    user_id =db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id =db.Column(db.String, db.ForeignKey('user.id'))
     user=db.orm.relationship('User')
     draft= db.Column(db.Boolean, default=True)
     notes= db.Column(db.String(50))
@@ -174,7 +177,7 @@ class UserAvailability(db.Model):
 
     __tablename__ = "user_availability"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    user_id = db.Column(db.String, db.ForeignKey("user.id"))
     user = db.orm.relationship("User")
     restaurant_id = db.Column(db.Integer, db.ForeignKey("restaurant.id"))
     restaurant = db.orm.relationship("Restaurant")
@@ -226,7 +229,7 @@ class Restaurant(db.Model):
     __tablename__ = "restaurant"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50))
-    gm_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    gm_id = db.Column(db.String, db.ForeignKey("user.id"))
     gm = db.orm.relationship("User")
     roles = db.orm.relationship("Role", viewonly=True)
     shifts = db.orm.relationship("Shift", viewonly=True)
@@ -250,7 +253,7 @@ class User(db.Model):
     """
 
     __tablename__ = "user"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.String, primary_key=True, unique=True, default= get_uuid)
     name = db.Column(db.String(50))
     email = db.Column(db.String(50),unique=True,nullable=False)
     password = db.Column(db.String(200),nullable=False)
@@ -259,36 +262,6 @@ class User(db.Model):
     gm_at = db.orm.relationship("Restaurant", viewonly=True)
     roles = db.orm.relationship("UserRolePreference", viewonly=True)
     availabilities = db.orm.relationship("UserAvailability", viewonly=True)
-
-    @classmethod
-    def signup(cls,restaurantname,name,phone,password):
-        """Signs up admin along w restaurant"""
-
-        hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
-
-        user = User(
-            restaurantname = restaurantname,
-            name = name,
-            phone = phone,
-            password = hashed_pwd,
-     )
-        db.session.add(user)
-        return user
-    @classmethod
-    def authenticate(cls, userid, password):
-        """Find user with `phone` and `password`.
-
-        If can't find matching user (or if password is wrong), returns False.
-        """
-
-        user = cls.query.filter_by(userid=userid).first()
-
-        if user:
-            is_auth = bcrypt.check_password_hash(user.password, password)
-            if is_auth:
-                return user
-
-        return False
 
 
 

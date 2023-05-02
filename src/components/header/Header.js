@@ -25,11 +25,8 @@ const Header = () => {
         <Link to="/bookoffs" style={{ textDecoration: "none" }}>
           <span>Bookoffs</span>
         </Link>
-        <Link to="/sign-up" style={{ textDecoration: "none" }}>
-          <span>Sign Up</span>
-        </Link>
-        <Link to="/login" style={{ textDecoration: "none" }}>
-          <span>Login</span>
+        <Link to="/sign-out" style={{ textDecoration: "none" }}>
+          <span>Sign-Out</span>
         </Link>
       </div>
     </div>

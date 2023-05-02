@@ -1,10 +1,10 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import "./Signupform.css";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase";
-
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const SignupForm = () => {
+  const navigate = useNavigate();
   const { handleSubmit, handleChange, values, touched, errors, handleBlur } =
     useFormik({
       initialValues: {
@@ -25,16 +25,26 @@ const SignupForm = () => {
           .min(6, "Password must be longer than 6 characters")
           .required("Required"),
       }),
-      onSubmit: ({ restaurantname, email, password, name }) => {
-        createUserWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            console.log(userCredential);
+      onSubmit: ({ email, password, name }) => {
+        axios
+          .post("http://localhost:5000/sign-up", {
+            email: email,
+            password: password,
+            name: name,
           })
-          .catch((error) => {
-            console.log(error);
+          .then(function (response) {
+            console.log(response);
+            navigate("/dashboard");
+          })
+          .catch(function (error) {
+            console.log(error, "error");
+            if (error.response.status === 401) {
+              alert("Invalid credentials");
+            }
           });
       },
     });
+
   return (
     <div className="center">
       <form onSubmit={handleSubmit}>
